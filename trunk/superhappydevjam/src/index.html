@@ -1,0 +1,13 @@
+<html>
+	<head>
+	<link rel="Stylesheet" href="css/style.css"></link>
+	</head>
+  <body>
+    {% for tweet in tweets %}
+      <blockquote>{{ tweet.content|escape }}</blockquote>
+    {% endfor %}
+
+    <a href="{{ url }}">{{ url_linktext }}</a>
+
+  </body>
+</html>
