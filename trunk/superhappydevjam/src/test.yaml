@@ -1,0 +1,15 @@
+# tree format
+config:
+    search:
+        web:
+            name: "search.web"
+            key: query
+    flickr:
+        photos: 
+            name: "flickr.photos.search"
+            key: text
+    upcoming:
+        events:
+            name: "upcoming.events"
+            key: tags
+            template: events.html

@@ -1,0 +1,10 @@
+{% extends "yquery.html" %}
+
+{% block title %}Search.Web{% endblock %}
+
+{% block content %}
+    {% for item in result %}
+      <blockquote>{{ item.title|escape }}</blockquote>
+      <a href="{{item.url}}">Link</a>
+    {% endfor %}
+{% endblock %}

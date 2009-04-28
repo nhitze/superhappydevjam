@@ -49,12 +49,39 @@ class VerifyYahoo(webapp.RequestHandler):
         
 class ReadYquery(webapp.RequestHandler):
     def get(self):
-        YQUERY_URL = 'http://query.yahooapis.com/v1/public/yql?q=SELECT%20*%20FROM%20search.web(10)%20WHERE%20query="appengine"'
-        YQUERY_NS = 'http://www.yahooapis.com/v1/base.rng'
+        
+        import yaml
+        f = open('test.yaml')
+        dataMap = yaml.load(f)
+        f.close()    
+
+        query = cgi.escape(self.request.get('text'))
+        if(query == ''):
+            query = 'appengine'
+
+        api = cgi.escape(self.request.get('queryapi'))
+        if(api == ''):
+            api = 'search'
+            
+        method = cgi.escape(self.request.get('querymethod'))
+        if(method == ''):
+            method = 'web'
+
+        dataMap['config'][api][method]['name']    
+        
+        YQUERY_URL = 'http://query.yahooapis.com/v1/public/yql?q=SELECT%20*%20FROM%20'+dataMap['config'][api][method]['name']+'(10)%20WHERE%20query="'+dataMap['config'][api][method]['key']+'"'
         dom = minidom.parse(urllib.urlopen(YQUERY_URL))
-        self.response.out.write('test')
-        for result in dom.getElementsByTagNameNS(YQUERY_NS, 'results'):
-            self.response.out.write(result)
+        results = dom.getElementsByTagName('result')
+        
+        value = []
+        for result in results:
+            value.append({'title':result.getElementsByTagName('title')[0].firstChild.data,
+                          'url':result.getElementsByTagName('url')[0].firstChild.data})            
+        
+        template_values = {'result':value}
+        
+        path = os.path.join(os.path.dirname(__file__), dataMap['config']['search']['web']['name'] + '.html')
+        self.response.out.write(template.render(path, template_values)) 
         
 class FeedTweet(webapp.RequestHandler):
   def get(self):
